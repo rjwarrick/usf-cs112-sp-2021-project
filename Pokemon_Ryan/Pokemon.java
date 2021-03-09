@@ -1,4 +1,15 @@
 //	Pokemon Class made by Ryan Warrick
+/*
+ * This is a comment, it is a nice one I hope, here is a joke:
+ *
+ * What animals are the best at hiding in trees?
+ *
+ * Hippos
+ * ...
+ * I mean, have you ever seen a hippo in a tree?
+ *
+ * hehehe
+ */
 
 package in_class_exercises;
 

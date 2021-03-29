@@ -54,8 +54,13 @@ public class DataPoint {
 		this.f2 = f2;
 	}
 	
+	@Override
+	public String toString() {
+		return this.label + " " + this.f1 + " " + this.f2 + " " + this.isTest;
+	}
+	
 	public void setLabel(String label) {
-		if (! (label.equals("Green") || label.equals("Blue"))) {
+		if (! (label.equals("Good") || label.equals("Bad"))) {
 			return;
 		}
 		this.label = label;

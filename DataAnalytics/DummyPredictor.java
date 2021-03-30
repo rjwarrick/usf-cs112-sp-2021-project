@@ -13,7 +13,7 @@ public class DummyPredictor extends Predictor {
 
 	@Override
 	public ArrayList<DataPoint>readData(String filename) {
-		// TODO Auto-generated method stub
+
 		ArrayList<DataPoint> brandNewData = new ArrayList<DataPoint>(2);
 		
 		File testData = new File(filename);
@@ -26,13 +26,10 @@ public class DummyPredictor extends Predictor {
 				Double f2 = scanner.nextDouble();
 				String label = scanner.next();
 				Boolean isTest = scanner.nextBoolean();
-//				System.out.println(scanner.nextLine());
 				
 				DataPoint dataPoint = new DataPoint(f1, f2, label, isTest);
 		
 				brandNewData.add(dataPoint);
-				
-				System.out.println(dataPoint);
 			}
 		}
 		
@@ -40,7 +37,6 @@ public class DummyPredictor extends Predictor {
 			e.printStackTrace();
 		}
 		
-//		System.out.println("Hello");
 		System.out.println(brandNewData);
 		return brandNewData;
 	}
@@ -81,22 +77,23 @@ public class DummyPredictor extends Predictor {
 		}
 		System.out.println(goodAvg);
 		System.out.println(badAvg);
-		return 0.0;
+		return goodAvg + badAvg;
 	}
 
 	@Override
 	public String getPrecision(ArrayList<DataPoint> data) {
-		return null;
-//		double goodDist = Math.abs(data.getF1() - this.goodAvg);
-//		double badDist = Math.abs(data.getF2() - this.badAvg);
-//		
-//		if (goodDist < badDist) {
-//			return "Good";
-//			
-//		} else {
-//			
-//			return "Bad"; 
-//		}
+//		return null;
+		double goodDist = Math.abs(this.goodAvg);
+		double badDist = Math.abs(this.badAvg);
+		
+		if (goodDist < badDist) {
+			System.out.println("Good");
+			return "Good";
+			
+		} else {
+			System.out.println("Bad");
+			return "Bad"; 
+		}
 	}
 }
 

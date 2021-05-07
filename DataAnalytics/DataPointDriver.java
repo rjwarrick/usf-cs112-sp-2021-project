@@ -14,6 +14,8 @@ public class DataPointDriver {
 		KNNPredictor knnPredictor = new KNNPredictor(1);
 		
 		knnPredictor.readData("titanic.csv");
+		
+//		knnPredictor.getDistance(null, null);
 
 		// TODO Auto-generated method stub
 		

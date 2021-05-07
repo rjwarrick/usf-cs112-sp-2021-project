@@ -1,11 +1,14 @@
 package dataanalytics;
 
 import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
+import java.lang.Math;
 
 public class KNNPredictor extends Predictor {
 	private int k;
@@ -44,7 +47,6 @@ public class KNNPredictor extends Predictor {
 			String stringSurvived = "";
 			String stringAge = "";
 			String stringFare = "";
-//			Integer newSurvived = 0;
 			Double newAge = 0.0;
 			Double newFare = 0.0;
 			
@@ -61,30 +63,25 @@ public class KNNPredictor extends Predictor {
 			if (records.get(6) != null) {
 				stringFare = records.get(6);
 			}
-//			try {
-//				newSurvived = Integer.parseInt(stringSurvived);
-//			} catch (NumberFormatException e) {
-//				continue;
-//			}
+
 			try {
 				newAge = Double.parseDouble(stringAge);
 			} catch (NumberFormatException e) {
 				continue;
 			}
-//			System.out.println(newAge);
+
 			try {
 				newFare = Double.parseDouble(stringFare);
 			} catch (NumberFormatException e) {
 				continue;
 			}
-//			System.out.println(newFare);
 			
 			boolean isTest;
 
 			Random rand = new Random();
 			double randNum = rand.nextDouble();
 			    // 90% of the data is reserved for training
-			if (randNum < 0.9) {
+			if (randNum <= 0.9) {
 				isTest = false;
 				// Set the type of DataPoint as “train” and put into the Collection
 			} else {
@@ -109,33 +106,40 @@ public class KNNPredictor extends Predictor {
 		for (int i = 0; i < dataPoints.size(); i++ ) {
 			System.out.println(dataPoints.get(i));
 		}
+		for (int i = 0; i < dataPoints.size(); i++ ) {
+			
+		}
+		System.out.println("Survived: " + survived);
 		return dataPoints;
 	}
 
 
 	private double getDistance(DataPoint p1, DataPoint p2) {
-		Double distance = 0.0;
+		double x1 = p1.getF1();
+		double x2 = p2.getF1();
+		double y1 = p1.getF2();
+		double y2 = p2.getF2();
+		
+		double distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+		
+		System.out.println(distance);
 		return distance;
 
 	}
-
+		
 	@Override
-	String test(DataPoint data) {
-//		ArrayList<distance, label> test = new ArrayList<distance, label>();
-//		if (label == true) {
-//
-//		}
-//		// TODO Auto-generated method stub
+	String test(DataPoint dataPoints) {
+
 		return null;
 	}
 
 	@Override
-	Double getAccuracy(ArrayList<DataPoint> data) {
-//		Double truePositive = 0.0;
-//		Double falsePositive = 0.0;
-//		Double falseNegative = 0.0;
-//		Double trueNegative = 0.0;
-//		Double accuracy = 0.0;
+	Double getAccuracy(ArrayList<DataPoint> dataPoints) {
+		int truePositive = 0;
+		int falsePositive = 0;
+		int falseNegative = 0;
+		int trueNegative = 0;
+
 //
 //		if (test.isEqual(1) && label.isEqual(1)) {
 //			truePositive += 1;

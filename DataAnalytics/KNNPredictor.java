@@ -115,12 +115,8 @@ public class KNNPredictor extends Predictor {
 
 
 	private double getDistance(DataPoint p1, DataPoint p2) {
-		double x1 = p1.getF1();
-		double x2 = p2.getF1();
-		double y1 = p1.getF2();
-		double y2 = p2.getF2();
-		
-		double distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+
+		double distance = Math.sqrt(Math.pow((p2.getF1() - p1.getF1()), 2) + Math.pow((p2.getF2() - p1.getF2()), 2));
 		
 		System.out.println(distance);
 		return distance;

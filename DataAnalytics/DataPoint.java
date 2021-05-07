@@ -18,6 +18,8 @@ public class DataPoint {
 		this.setLabel(label);;
 	}
 	
+//	public DataPoint(Double f1,)
+	
 	public DataPoint(Double f1) {
 		this.f1 = f1;
 		this.label = null;
@@ -56,11 +58,11 @@ public class DataPoint {
 	
 	@Override
 	public String toString() {
-		return this.label + " " + this.f1 + " " + this.f2 + " " + this.isTest;
+		return this.f1 + " " + this.f2 + " " + this.label + " " + this.isTest;
 	}
 	
 	public void setLabel(String label) {
-		if (! (label.equals("Good") || label.equals("Bad"))) {
+		if (! (label.equals("1") || label.equals("0"))) {
 			return;
 		}
 		this.label = label;

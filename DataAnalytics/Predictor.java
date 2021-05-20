@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public abstract class Predictor {
 	
-	abstract ArrayList<DataPoint> readData(String filename);
+	public abstract ArrayList<DataPoint> readData(String filename);
 	
-	abstract String test(DataPoint data);
+	public abstract int test(DataPoint data);
 	
-	abstract Double getAccuracy(ArrayList<DataPoint>data);
+	public abstract Double getAccuracy(ArrayList<DataPoint> data);
 	
-	abstract String getPrecision(ArrayList<DataPoint>data);
+	public abstract Double getPrecision(ArrayList<DataPoint> data); // changed from String
 
 }

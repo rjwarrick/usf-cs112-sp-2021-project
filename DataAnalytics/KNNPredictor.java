@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
@@ -14,6 +15,8 @@ public class KNNPredictor extends Predictor {
 	private int k;
 	private int survived = 0;
 	private int died = 0;
+	ArrayList<DataPoint> testPoints = new ArrayList<DataPoint>();
+	ArrayList<DataPoint> trainPoints = new ArrayList<DataPoint>();
 
 	public KNNPredictor(int k) {
 		this.k = k;
@@ -31,7 +34,7 @@ public class KNNPredictor extends Predictor {
 	}
 
 	@Override
-	public ArrayList<DataPoint> readData(String filename) { // bug...
+	public ArrayList<DataPoint> readData(String filename) {
 		ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
 		Scanner scanner = null;
@@ -44,18 +47,19 @@ public class KNNPredictor extends Predictor {
 		}
 
 		while (scanner.hasNextLine()) {
-			String stringSurvived = "";
+			String doubleSurvived = "";
 			String stringAge = "";
 			String stringFare = "";
-			Double newAge = 0.0;
-			Double newFare = 0.0;
-			
+			double newAge = 0.0;
+			double newFare = 0.0;
+			boolean isTest = false;
+
 			List<String> records = getRecordFromLine(scanner.nextLine());
 			if (records.size() != 7) {
 				continue;
 			}
 			if (records.get(1) != null) {
-				stringSurvived = records.get(1);
+				doubleSurvived = records.get(1);
 			}
 			if (records.get(5) != null) {
 				stringAge = records.get(5);
@@ -75,115 +79,171 @@ public class KNNPredictor extends Predictor {
 			} catch (NumberFormatException e) {
 				continue;
 			}
-			
-			boolean isTest;
 
 			Random rand = new Random();
-			double randNum = rand.nextDouble();
-			    // 90% of the data is reserved for training
-			if (randNum <= 0.9) {
-				isTest = false;
-				// Set the type of DataPoint as “train” and put into the Collection
-			} else {
-				isTest = true;
-				// Set the type of DataPoint as “test” and put into the Collection
+
+			for (int i = 0; i < dataPoints.size(); i++) {
+
+				if (rand.nextDouble() <= 0.9) {
+					isTest = false;
+					DataPoint trainDataPoint = new DataPoint(newAge, newFare, doubleSurvived, isTest);
+					trainPoints.add(trainDataPoint);
+
+				} else {
+					isTest = true;
+					DataPoint testDataPoint = new DataPoint(newAge, newFare, doubleSurvived, isTest);
+					testPoints.add(testDataPoint);
+				}
+			}
+			for (int i = 0; i < dataPoints.size(); i++) {
+				System.out.println(trainPoints.get(i));
 			}
 
-			if (stringSurvived == "1") {
-//				survivedbool = true;
-				survived += 1;
-
-			} else {
-//				survivedbool = false;
-				died += 1;
+			for (int i = 0; i < dataPoints.size(); i++) {
+				System.out.println(testPoints.get(i));
 			}
-
-			DataPoint ageAndFare = new DataPoint(newAge, newFare, stringSurvived, isTest);
-
-			dataPoints.add(ageAndFare);
-
 		}
-		for (int i = 0; i < dataPoints.size(); i++ ) {
-			System.out.println(dataPoints.get(i));
-		}
-		for (int i = 0; i < dataPoints.size(); i++ ) {
-			
-		}
-		System.out.println("Survived: " + survived);
+
 		return dataPoints;
 	}
-
 
 	private double getDistance(DataPoint p1, DataPoint p2) {
 
 		double distance = Math.sqrt(Math.pow((p2.getF1() - p1.getF1()), 2) + Math.pow((p2.getF2() - p1.getF2()), 2));
-		
-		System.out.println(distance);
+
 		return distance;
 
 	}
-		
-	@Override
-	String test(DataPoint dataPoints) {
 
-		return null;
+	@Override
+	public int test(DataPoint datapoint) {
+		if (datapoint.getIsTest()) {
+
+			double[][] arr = new double[testPoints.size()][2];
+
+			for (int i = 0; i < testPoints.size(); i++) {
+				arr[i][0] = getDistance(datapoint, testPoints.get(i));
+
+			}
+
+			java.util.Arrays.sort(arr);
+			
+			double[] slice = new double[k];
+
+			for (int i = 0; i < k; i++) {
+				slice[i] = arr[i][1];
+			}
+
+			int hasSurvived = 0;
+			int hasNotSurvived = 0;
+
+			for (double label : slice) {
+
+				if (label == 1.0) {
+
+					hasSurvived++;
+
+				} else if (label == 0.0) {
+
+					hasNotSurvived++;
+				}
+			}
+
+			if (hasSurvived > hasNotSurvived) {
+
+				return 1;
+
+			} else if (hasSurvived < hasNotSurvived) {
+
+				return 0;
+			}
+
+			return 0;
+
+		} else {
+			System.out.println("This is not a test point!");
+			return 0;
+		}
+
 	}
 
 	@Override
-	Double getAccuracy(ArrayList<DataPoint> dataPoints) {
+	public Double getAccuracy(ArrayList<DataPoint> dataPoints) {
+
 		int truePositive = 0;
 		int falsePositive = 0;
 		int falseNegative = 0;
 		int trueNegative = 0;
+		int testLabel = 0;
+		int pointLabel = 0;
+		int count = 0;
 
-//
-//		if (test.isEqual(1) && label.isEqual(1)) {
-//			truePositive += 1;
-//		}
-//
-//		if (test.isEqual(1) && label.isEqual(0)) {
-//			falsePositive += 1;
-//		}
-//
-//		if (test.isEqual(0) && label.isEqual(0)) {
-//			falseNegative += 1;
-//		}
-//
-//		if (test.isEqual(0) && label.isEqual(1)) {
-//			trueNegative += 1;
-//		}
-//
-//		accuracy = (truePositive + trueNegative) / (truePositive + trueNegative + falsePositive + falseNegative);
+		for (int i = 0; i < dataPoints.size(); i++) {
 
-		return null;
+			if (testLabel == 1 && pointLabel == 1) {
+				truePositive++;
+			}
+
+			else if (testLabel == 1 && pointLabel == 0) {
+				falsePositive++;
+			}
+
+			else if (testLabel == 0 && pointLabel == 1) {
+				falseNegative++;
+			}
+
+			else if (testLabel == 0 && pointLabel == 0) {
+				trueNegative++;
+			}
+
+			count++;
+		}
+
+		double accuracy = (truePositive + trueNegative) / (truePositive + falsePositive + falseNegative + trueNegative);
+		return accuracy * 100;
 	}
 
 	@Override
-	Double getPrecision(ArrayList<DataPoint> data) { // changed from String
-//		Double truePositive = 0.0;
-//		Double falsePositive = 0.0;
-//		Double falseNegative = 0.0;
-//		Double trueNegative = 0.0;
-//		Double precision = 0.0;
-//
-//		if (test.isEqual(1) && label.isEqual(1)) {
-//			truePositive += 1;
-//		}
-//
-//		if (test.isEqual(1) && label.isEqual(0)) {
-//			falsePositive += 1;
-//		}
-//
-//		if (test.isEqual(0) && label.isEqual(0)) {
-//			falseNegative += 1;
-//		}
-//
-//		if (test.isEqual(0) && label.isEqual(1)) {
-//			trueNegative += 1;
-//		}
-//
-//		precision = truePositive / (truePositive + falseNegative);
+	public Double getPrecision(ArrayList<DataPoint> data) {
+		ArrayList<Integer> testLabels = new ArrayList<Integer>();
 
-		return null;
+		int truePositive = 0;
+		int falseNegative = 0;
+		int testLabel = 0;
+		int pointLabel = 0;
+		int count = 0;
+
+		for (int i = 0; i < data.size(); i++) {
+
+			if (testLabel == 1 && pointLabel == 1) {
+				truePositive++;
+
+			} else if (testLabel == 0 && pointLabel == 1) {
+				falseNegative++;
+			}
+			count++;
+		}
+
+		double precision = truePositive / (truePositive + falseNegative);
+		return precision * 100;
+
 	}
+
+	public int getSurvived() {
+		return survived;
+	}
+
+	public int getDied() {
+		return died;
+	}
+
+	public ArrayList<DataPoint> getTests() {
+		return this.testPoints;
+	}
+
+	public double getAccuracy(List<DataPoint> data) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
